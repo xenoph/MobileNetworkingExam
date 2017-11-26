@@ -13,6 +13,6 @@ public class MatchController : MonoBehaviour {
 	}
 
 	public void SetUpMatch(string cardArray) {
-
+		_interfaceController.GetMatchCanvas();
 	}
 }

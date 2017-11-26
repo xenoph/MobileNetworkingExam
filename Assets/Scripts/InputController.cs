@@ -11,11 +11,5 @@ public class InputController : MonoBehaviour {
 	}
 	
 	void Update () {
-		if(Input.GetKeyUp(KeyCode.A)) {
-			_nController.CheckForUsers();
-		}
-		if(Input.GetKeyUp(KeyCode.M)) {
-			_nController.MatchWithOtherPlayer();
-		}
 	}
 }

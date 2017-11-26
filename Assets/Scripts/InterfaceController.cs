@@ -43,8 +43,14 @@ public class InterfaceController : MonoBehaviour {
 	/// <summary>
 	/// Starts a match with another online player
 	/// </summary>
-	public void StartMatch() {
+	public void MatchWithPlayer() {
 		_netController.MatchWithOtherPlayer();
+	}
+
+	/// <summary>
+	/// Toggles match canvas
+	/// </summary>
+	public void GetMatchCanvas() {
 		ToggleCanvas(MatchCanvas);
 	}
 
@@ -62,7 +68,8 @@ public class InterfaceController : MonoBehaviour {
 	/// Change lobby to give player the possibility to start a match
 	/// </summary>
 	public void SetPlayersAvailable() {
-		SetMatchButton("Start Match", StartMatch);
+		SetLobbyHeadlineText("Other Players Online");
+		SetMatchButton("Start Match", MatchWithPlayer);
 	}
 
 	/// <summary>
@@ -70,6 +77,14 @@ public class InterfaceController : MonoBehaviour {
 	/// </summary>
 	public void RefreshPlayerList() {
 		_netController.CheckForUsers();
+	}
+
+	/// <summary>
+	/// Resets button and inform the player if the matching failed!
+	/// </summary>
+	public void MatchingFailed() {
+		SetLobbyHeadlineText("Matching failed!");
+		SetMatchButton("Refresh", RefreshPlayerList);
 	}
 
 	/// <summary>

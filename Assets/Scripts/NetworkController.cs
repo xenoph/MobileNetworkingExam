@@ -18,6 +18,7 @@ public class NetworkController : MonoBehaviour {
 
 	private void Awake() {
 		_interfaceController = GetComponent<InterfaceController>();
+		_matchController = GetComponent<MatchController>();
 	}
 
 	private void Start(){
@@ -27,69 +28,107 @@ public class NetworkController : MonoBehaviour {
 
 	public void Login(string name) {
 		_playerName = name;
+		RegisterUser();
 		CheckForUsers();
 	}
 
+	/// <summary>
+	/// Checks with the server if any other players are currently onlye
+	/// </summary>
 	public void CheckForUsers() {
-		Debug.Log("Checking for users");
 		var json = CreateJSON();
 		Socket.Emit("CheckCurrentUsers", json);
 	}
 	
+	/// <summary>
+	/// Sends request to match with another online player
+	/// </summary>
 	public void MatchWithOtherPlayer() {
 		var json = CreateJSON();
 		Socket.Emit("MatchPlayers", json);
 	}
 
+	/// <summary>
+	/// Sets all the incoming connections from the server
+	/// </summary>
 	private void SetSocketConnections() {
 		Socket.On("init", OnInit);
-		Socket.On("registered", OnRegistered);
-		Socket.On("allPlayers", OnGettingUsers);
+		Socket.On("registered", OnRegister);
+
 		Socket.On("noMatch", OnNoMatch);
 		Socket.On("matchedPlayer", OnMatchedPlayer);
 
 		Socket.On("noUsers", OnNoUsersOnline);
 		Socket.On("onlineUsers", OnUsersOnline);
-		
-		Socket.On("matchSetup", OnReceiveMatchSetup);
 	}
 
+	/// <summary>
+	/// Initial connection from server.
+	/// </summary>
+	/// <param name="obj"></param>
 	private void OnInit(SocketIOEvent obj) {
-		if(Socket != null) {
-			var json = new JSONObject();
-			Socket.Emit("PlayerLogin", json);
-		}
+		Debug.Log("init");
 	}
 
-	private void OnRegistered(SocketIOEvent obj) {
+	/// <summary>
+	/// "Registers" the users by saving the player name and sending a notification to the server
+	/// </summary>
+	private void RegisterUser() {
+		var json = new JSONObject();
+		json.AddField("playerName", _playerName);
+		Socket.Emit("PlayerLogin", json);
+	}
+
+	/// <summary>
+	/// Return connection from server after registration to get socket id.
+	/// </summary>
+	/// <param name="obj"></param>
+	private void OnRegister(SocketIOEvent obj) {
 		_socketID = obj.data["socketid"].str;
-		Debug.Log(_socketID);
 	}
 
-	private void OnGettingUsers(SocketIOEvent obj) {
-		Debug.Log(obj.data);
-	}
-
+	/// <summary>
+	/// When a matching failed for any reason
+	/// </summary>
+	/// <param name="obj"></param>
 	private void OnNoMatch(SocketIOEvent obj) {
+		_interfaceController.MatchingFailed();
 	}
 
+	/// <summary>
+	/// When the server has no other users online
+	/// </summary>
+	/// <param name="obj"></param>
 	private void OnNoUsersOnline(SocketIOEvent obj) {
 		_interfaceController.SetNoPlayersAvailable();
 	}
 
+	/// <summary>
+	/// When the server has other users online
+	/// </summary>
+	/// <param name="obj"></param>
 	private void OnUsersOnline(SocketIOEvent obj) {
 		_interfaceController.SetPlayersAvailable();
 	}
 
+	/// <summary>
+	/// When a match happens. If the local player is not the one requesting,
+	/// it should check if they're in lobby or not.
+	/// </summary>
+	/// <param name="obj"></param>
 	private void OnMatchedPlayer(SocketIOEvent obj) {
+		if(!_interfaceController.LobbyCanvas.activeSelf) {
+			_interfaceController.MatchingFailed();
+			return;
+		}
 		_opponentSocketID = obj.data["opponentID"].str;
 		_matchController.SetUpMatch(obj.data["matchArray"].str);
 	}
 
-	private void OnReceiveMatchSetup(SocketIOEvent obj) {
-
-	}
-
+	/// <summary>
+	/// Creates a JSONObject with the players socketid.
+	/// </summary>
+	/// <returns></returns>
 	private JSONObject CreateJSON() {
 		var json = new JSONObject();
 		json.AddField("SocketID", _socketID);
