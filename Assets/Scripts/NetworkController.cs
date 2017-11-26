@@ -8,9 +8,13 @@ public class NetworkController : MonoBehaviour {
 	public SocketIOComponent Socket;
 
 	private InterfaceController _interfaceController;
+	private MatchController _matchController;
 
 	private string _socketID;
 	private string _playerName;
+
+	private string _opponentSocketID;
+	private string _opponentPlayerName;
 
 	private void Awake() {
 		_interfaceController = GetComponent<InterfaceController>();
@@ -46,6 +50,8 @@ public class NetworkController : MonoBehaviour {
 
 		Socket.On("noUsers", OnNoUsersOnline);
 		Socket.On("onlineUsers", OnUsersOnline);
+		
+		Socket.On("matchSetup", OnReceiveMatchSetup);
 	}
 
 	private void OnInit(SocketIOEvent obj) {
@@ -76,6 +82,11 @@ public class NetworkController : MonoBehaviour {
 	}
 
 	private void OnMatchedPlayer(SocketIOEvent obj) {
+		_opponentSocketID = obj.data["opponentID"].str;
+		_matchController.SetUpMatch(obj.data["matchArray"].str);
+	}
+
+	private void OnReceiveMatchSetup(SocketIOEvent obj) {
 
 	}
 
