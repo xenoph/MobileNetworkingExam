@@ -7,12 +7,23 @@ public class NetworkController : MonoBehaviour {
 
 	public SocketIOComponent Socket;
 
+	private InterfaceController _interfaceController;
+
 	private string _socketID;
-	//private void _playerID; maybe?
+	private string _playerName;
+
+	private void Awake() {
+		_interfaceController = GetComponent<InterfaceController>();
+	}
 
 	private void Start(){
 		Socket = GetComponent<SocketIOComponent>();
 		SetSocketConnections();
+	}
+
+	public void Login(string name) {
+		_playerName = name;
+		CheckForUsers();
 	}
 
 	public void CheckForUsers() {
@@ -32,6 +43,9 @@ public class NetworkController : MonoBehaviour {
 		Socket.On("allPlayers", OnGettingUsers);
 		Socket.On("noMatch", OnNoMatch);
 		Socket.On("matchedPlayer", OnMatchedPlayer);
+
+		Socket.On("noUsers", OnNoUsersOnline);
+		Socket.On("onlineUsers", OnUsersOnline);
 	}
 
 	private void OnInit(SocketIOEvent obj) {
@@ -51,11 +65,18 @@ public class NetworkController : MonoBehaviour {
 	}
 
 	private void OnNoMatch(SocketIOEvent obj) {
-		Debug.Log("Did not find a match");
+	}
+
+	private void OnNoUsersOnline(SocketIOEvent obj) {
+		_interfaceController.SetNoPlayersAvailable();
+	}
+
+	private void OnUsersOnline(SocketIOEvent obj) {
+		_interfaceController.SetPlayersAvailable();
 	}
 
 	private void OnMatchedPlayer(SocketIOEvent obj) {
-		Debug.Log("Found a match");
+
 	}
 
 	private JSONObject CreateJSON() {
