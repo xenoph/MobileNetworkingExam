@@ -121,8 +121,15 @@ public class NetworkController : MonoBehaviour {
 			_interfaceController.MatchingFailed();
 			return;
 		}
+
+		var numList = new List<float>();
+		Debug.Log(obj.data["matchArray"].Count);
+		for(int i = 0; i < obj.data["matchArray"].Count; i++) {
+			numList.Add(obj.data["matchArray"][i].n);
+		}
+		Debug.Log("iterated numbers");
 		_opponentSocketID = obj.data["opponentID"].str;
-		_matchController.SetUpMatch(obj.data["matchArray"].str);
+		_matchController.SetUpMatch(numList);
 	}
 
 	/// <summary>
