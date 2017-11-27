@@ -88,6 +88,13 @@ public class InterfaceController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Closes down the match after it has ended
+	/// </summary>
+	public void CloseMatch() {
+
+	}
+
+	/// <summary>
 	/// Sets the lobby button text and changes listener to the given Action
 	/// </summary>
 	/// <param name="txt"></param>

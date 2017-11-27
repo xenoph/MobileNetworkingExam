@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SocketIO;
+using System.Linq;
 
 public class NetworkController : MonoBehaviour {
 
@@ -49,6 +50,26 @@ public class NetworkController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Sends the changes to the cardList to the server so it can be passed to the opponent.
+	/// </summary>
+	/// <param name="cardList"></param>
+	public void SendMove(List<float> cardList) {
+		string cardArrayString = string.Join(",", cardList.Select(x => x.ToString()).ToArray());
+		var json = CreateJSON();
+		json.AddField("oppSocket", _opponentSocketID);
+		json.AddField("cardArray", cardArrayString);
+		Socket.Emit("MadeMove", json);
+	}
+
+	/// <summary>
+	/// Sends a resignation from the game to the server
+	/// </summary>
+	public void SendResignation() {
+		var json = CreateJSON();
+		Socket.Emit("Resign", json);
+	}
+
+	/// <summary>
 	/// Sets all the incoming connections from the server
 	/// </summary>
 	private void SetSocketConnections() {
@@ -68,6 +89,14 @@ public class NetworkController : MonoBehaviour {
 	/// <param name="obj"></param>
 	private void OnInit(SocketIOEvent obj) {
 		Debug.Log("init");
+	}
+
+	/// <summary>
+	/// When the opponent resigns
+	/// </summary>
+	/// <param name="obj"></param>
+	private void OnResign(SocketIOEvent obj) {
+		_matchController.OpponentResigned();
 	}
 
 	/// <summary>

@@ -16,7 +16,21 @@ public class MatchController : MonoBehaviour {
 
 	public void SetUpMatch(List<float> cardList) {
 		_interfaceController.GetMatchCanvas();
-		IterateCardList(cardList);
+        IterateCardList(cardList);
+	}
+
+	public void OpponentResigned() {
+		EndMatch();
+	}
+
+	public void Resign() {
+		_netController.SendResignation();
+		EndMatch();
+	}
+
+	private void EndMatch() {
+		_cardList.Clear();
+		_interfaceController.CloseMatch();
 	}
 
 	private void IterateCardList(List<float> cList) {
