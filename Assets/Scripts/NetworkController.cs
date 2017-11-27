@@ -46,6 +46,7 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	public void MatchWithOtherPlayer() {
 		var json = CreateJSON();
+		json.AddField("playerName", _playerName);
 		Socket.Emit("MatchPlayers", json);
 	}
 
@@ -66,7 +67,17 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	public void SendResignation() {
 		var json = CreateJSON();
+		json.AddField("oppSocket", _opponentSocketID);
 		Socket.Emit("Resign", json);
+	}
+
+	/// <summary>
+	/// If the player times out of their round.
+	/// </summary>
+	public void TimedOut() {
+		var json = CreateJSON();
+		json.AddField("oppSocket", _opponentSocketID);
+		Socket.Emit("TimedOut", json);
 	}
 
 	/// <summary>
@@ -76,11 +87,13 @@ public class NetworkController : MonoBehaviour {
 		Socket.On("init", OnInit);
 		Socket.On("registered", OnRegister);
 
+		Socket.On("noUsers", OnNoUsersOnline);
+		Socket.On("onlineUsers", OnUsersOnline);
 		Socket.On("noMatch", OnNoMatch);
 		Socket.On("matchedPlayer", OnMatchedPlayer);
 
-		Socket.On("noUsers", OnNoUsersOnline);
-		Socket.On("onlineUsers", OnUsersOnline);
+		Socket.On("playerResigned", OnResign);
+		Socket.On("movedone", OnReceivedMove);
 	}
 
 	/// <summary>
@@ -130,6 +143,7 @@ public class NetworkController : MonoBehaviour {
 	/// <param name="obj"></param>
 	private void OnNoUsersOnline(SocketIOEvent obj) {
 		_interfaceController.SetNoPlayersAvailable();
+		Invoke("CheckForUsers", 5f);
 	}
 
 	/// <summary>
@@ -159,6 +173,14 @@ public class NetworkController : MonoBehaviour {
 		Debug.Log("iterated numbers");
 		_opponentSocketID = obj.data["opponentID"].str;
 		_matchController.SetUpMatch(numList);
+	}
+
+	/// <summary>
+	/// When the opponent has made their move.
+	/// </summary>
+	/// <param name="obj"></param>
+	private void OnReceivedMove(SocketIOEvent obj) {
+		_matchController.OpponentMoved();
 	}
 
 	/// <summary>

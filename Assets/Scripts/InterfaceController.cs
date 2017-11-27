@@ -18,6 +18,8 @@ public class InterfaceController : MonoBehaviour {
 	public Text ErrorText;
 	public Text LobbyHeadlineText;
 
+	public Image[] CardSpawnLocations;
+
 	private NetworkController _netController;
 
 	private void Awake() {
