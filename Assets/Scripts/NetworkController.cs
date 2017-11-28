@@ -54,11 +54,10 @@ public class NetworkController : MonoBehaviour {
 	/// Sends the changes to the cardList to the server so it can be passed to the opponent.
 	/// </summary>
 	/// <param name="cardList"></param>
-	public void SendMove(List<float> cardList) {
-		string cardArrayString = string.Join(",", cardList.Select(x => x.ToString()).ToArray());
+	public void SendMove(string placement) {
 		var json = CreateJSON();
 		json.AddField("oppSocket", _opponentSocketID);
-		json.AddField("cardArray", cardArrayString);
+		json.AddField("cardPlacement", placement);
 		Socket.Emit("MadeMove", json);
 	}
 
@@ -81,6 +80,24 @@ public class NetworkController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Send a message that the player did not match cards
+	/// </summary>
+	public void SendNoCardMatch() {
+		var json = CreateJSON();
+		json.AddField("oppSocket", _opponentSocketID);
+		Socket.Emit("NoCardMatch", json);
+	}
+
+	/// <summary>
+	/// Send a message that the player matched two cards
+	/// </summary>
+	public void SendCardMatch() {
+		var json = CreateJSON();
+		json.AddField("oppSocket", _opponentSocketID);
+		Socket.Emit("CardMatch", json);
+	}
+
+	/// <summary>
 	/// Sets all the incoming connections from the server
 	/// </summary>
 	private void SetSocketConnections() {
@@ -94,6 +111,8 @@ public class NetworkController : MonoBehaviour {
 
 		Socket.On("playerResigned", OnResign);
 		Socket.On("movedone", OnReceivedMove);
+		Socket.On("noCardMatch", OnNoCardMatch);
+		Socket.On("cardMatch", OnCardMatch);
 	}
 
 	/// <summary>
@@ -172,7 +191,7 @@ public class NetworkController : MonoBehaviour {
 		}
 		Debug.Log("iterated numbers");
 		_opponentSocketID = obj.data["opponentID"].str;
-		_matchController.SetUpMatch(numList);
+		_matchController.SetUpMatch(numList, obj.data["starting"].b);
 	}
 
 	/// <summary>
@@ -180,7 +199,20 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	/// <param name="obj"></param>
 	private void OnReceivedMove(SocketIOEvent obj) {
-		_matchController.OpponentMoved();
+		var placement = int.Parse(obj.data["cardPlacement"].str);
+		_matchController.OpponentMoved(int.Parse(obj.data["cardPlacement"].str));
+	}
+
+	/// <summary>
+	/// When the opponent failed to match two cards
+	/// </summary>
+	/// <param name="obj"></param>	
+	private void OnNoCardMatch(SocketIOEvent obj) {
+		_matchController.OpponentDidNotMatch();
+	}
+
+	private void OnCardMatch(SocketIOEvent obj) {
+		_matchController.OpponentMatched();
 	}
 
 	/// <summary>
