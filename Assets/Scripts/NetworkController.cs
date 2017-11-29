@@ -110,6 +110,7 @@ public class NetworkController : MonoBehaviour {
 		Socket.On("matchedPlayer", OnMatchedPlayer);
 
 		Socket.On("playerResigned", OnResign);
+		Socket.On("playerLeft", OnPlayerLeave);
 		Socket.On("movedone", OnReceivedMove);
 		Socket.On("noCardMatch", OnNoCardMatch);
 		Socket.On("cardMatch", OnCardMatch);
@@ -211,8 +212,44 @@ public class NetworkController : MonoBehaviour {
 		_matchController.OpponentDidNotMatch();
 	}
 
+	/// <summary>
+	/// Opponent made a match
+	/// </summary>
+	/// <param name="obj"></param>
 	private void OnCardMatch(SocketIOEvent obj) {
 		_matchController.OpponentMatched();
+	}
+
+	/// <summary>
+	/// Opponent left game outside the resign button
+	/// Using the same method as resign, but keeping a different server call in case of change
+	/// </summary>
+	/// <param name="obj"></param>	
+	private void OnPlayerLeave(SocketIOEvent obj) {
+		_matchController.OpponentResigned();
+	}
+
+	/// <summary>
+	/// When the network controller is disabled we know that the player has quit the game
+	/// Check if the match canvas is active before sending
+	/// </summary>
+	private void OnApplicationQuit() {
+		if(!_interfaceController.MatchCanvas.activeSelf) { return; }
+		var json = CreateJSON();
+		json.AddField("oppSocket", _opponentSocketID);
+		Socket.Emit("QuitGame", json);
+	}
+
+	/// <summary>
+	/// When the network controller is disabled we know that the player has quit the game
+	/// Check if the match canvas is active before sending
+	/// </summary>
+	private void OnDisable() {
+		Debug.Log("OnDisable");
+		if(!_interfaceController.MatchCanvas.activeSelf) { return; }
+		var json = CreateJSON();
+		json.AddField("oppSocket", _opponentSocketID);
+		Socket.Emit("QuitGame", json);
 	}
 
 	/// <summary>
