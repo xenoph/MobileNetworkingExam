@@ -62,6 +62,7 @@ public class MatchController : MonoBehaviour {
 			_card2 = go;
 			_card2Type = cardType;
 			_card2Placement = placement.ToString()[0];
+			_oppTurn = 0;
 		}
 		SpawnCardFront(cardType, go);
 	}
