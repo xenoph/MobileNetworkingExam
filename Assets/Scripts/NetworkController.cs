@@ -114,6 +114,8 @@ public class NetworkController : MonoBehaviour {
 		Socket.On("movedone", OnReceivedMove);
 		Socket.On("noCardMatch", OnNoCardMatch);
 		Socket.On("cardMatch", OnCardMatch);
+
+		Socket.On("timedOut", OnTimedOut);
 	}
 
 	/// <summary>
@@ -238,6 +240,14 @@ public class NetworkController : MonoBehaviour {
 		var json = CreateJSON();
 		json.AddField("oppSocket", _opponentSocketID);
 		Socket.Emit("QuitGame", json);
+	}
+
+	/// <summary>
+	/// When the opponent timed out.
+	/// </summary>
+	/// <param name="obj"></param>
+	private void OnTimedOut(SocketIOEvent obj) {
+		_matchController.OpponentResigned();
 	}
 
 	/// <summary>
