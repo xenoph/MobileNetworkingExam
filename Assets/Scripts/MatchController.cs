@@ -64,9 +64,11 @@ public class MatchController : MonoBehaviour {
 	public void SetUpMatch(List<float> cardList, bool starting) {
 		_playerTurn = starting;
 		if(_playerTurn) {
+			WhoTurn.text = "Y O U R   T U R N";
 			_opponentTurn = false;
 			_canClick = true;
 		} else {
+			WhoTurn.text = "T U R N   A R O U N D";
 			_opponentTurn = true;
 		}
 		_interfaceController.GetMatchCanvas();
