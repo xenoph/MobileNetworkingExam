@@ -13,6 +13,8 @@ public class MatchController : MonoBehaviour {
 	public Text Timer2;
 	public Text WhoTurn;
 	private float countdown = 10f;
+	public string PlayerName;
+	public string OpponentName;
 
 	private NetworkController _netController;
 	private InterfaceController _interfaceController;
@@ -64,11 +66,11 @@ public class MatchController : MonoBehaviour {
 	public void SetUpMatch(List<float> cardList, bool starting) {
 		_playerTurn = starting;
 		if(_playerTurn) {
-			WhoTurn.text = "Y O U R   T U R N";
+			WhoTurn.text = PlayerName.ToUpper() + " T U R N";
 			_opponentTurn = false;
 			_canClick = true;
 		} else {
-			WhoTurn.text = "T U R N   A R O U N D";
+			WhoTurn.text = OpponentName.ToUpper() + " T U R N";
 			_opponentTurn = true;
 		}
 		_interfaceController.GetMatchCanvas();
@@ -102,12 +104,12 @@ public class MatchController : MonoBehaviour {
 	public void TurnSwitch() {
 		if(_playerTurn == true) {
 			Debug.Log("changes from player turn");
-			WhoTurn.text = "T U R N   A R O U N D";
+			WhoTurn.text = OpponentName.ToUpper() + " T U R N";
 			_playerTurn = false;
 			_opponentTurn = true;
 		} else {
 			Debug.Log("Changes to player turn");
-			WhoTurn.text = "Y O U R   T U R N";
+			WhoTurn.text = PlayerName.ToUpper() + " T U R N";
 			_playerTurn = true;
 			_opponentTurn = false;
 			_canClick = true;
