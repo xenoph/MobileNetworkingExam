@@ -46,7 +46,6 @@ public class MatchController : MonoBehaviour {
 			Timer2.text = "" + Mathf.Round(countdown);
 			if(countdown <= 0){
 				if(_playerTurn){
-					Debug.Log("timed out");
 					_netController.TimedOut();
 				}
 				EndTurn();
@@ -96,19 +95,19 @@ public class MatchController : MonoBehaviour {
 		SpawnCardFront(cardType, go);
 	}
 
-	public void TurnSwitch()
-	{
-		if(_playerTurn == true){
+	public void TurnSwitch() {
+		if(_playerTurn == true) {
+			Debug.Log("changes from player turn");
 			WhoTurn.text = "T U R N   A R O U N D";
 			_playerTurn = false;
 			_opponentTurn = true;
 		} else {
+			Debug.Log("Changes to player turn");
 			WhoTurn.text = "Y O U R   T U R N";
 			_playerTurn = true;
 			_opponentTurn = false;
 		}
 			countdown = 10f;
-		
 	}
 
 	/// <summary>
@@ -212,6 +211,7 @@ public class MatchController : MonoBehaviour {
 	/// Checks if the two turned cards match by comparing type
 	/// </summary>
 	private void CheckForMatch() {
+		TurnSwitch();
 		if(_card1Type == _card2Type) {
 			MadeMatch();
 		} else {
