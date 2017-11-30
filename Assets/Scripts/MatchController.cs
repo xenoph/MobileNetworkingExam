@@ -13,6 +13,8 @@ public class MatchController : MonoBehaviour {
 	public Text Timer1;
 	public Text Timer2;
 	public Text WhoTurn;
+	public Text WinText1;
+	public Text WinText2;
 	private float countdown = 10f;
 	public string PlayerName;
 	public string OpponentName;
@@ -305,12 +307,22 @@ public class MatchController : MonoBehaviour {
 	/// Ends the match
 	/// </summary>
 	private void EndMatch() {
+		_interfaceController.WinningScreen();
 		if(OppMatches > PlayMatches)
-			{print("Opponent won");}
+			{
+				WinText1.text = ("Loser");
+				WinText2.text = ("Loser");
+			}
 		else if(PlayMatches > OppMatches)
-			{print("You won");}
+			{
+				WinText1.text = ("Winner");
+				WinText2.text = ("Winner");
+			}
 		else
-			{print("It's a draw");}
+			{
+				WinText1.text = ("Tie");
+				WinText2.text = ("Tie");
+			}
 
 		ResetCardInfo();
 		_cardList.Clear();

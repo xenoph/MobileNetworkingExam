@@ -128,6 +128,11 @@ public class InterfaceController : MonoBehaviour {
 		ToggleCanvas(LoginCanvas);
 	}
 
+	public void MainMenu()
+	{
+		ToggleCanvas(MainMenuCanvas);
+	}
+
 	
 	/// <summary>
 	/// Toggles the canvases to the given one by first deactivating all,
