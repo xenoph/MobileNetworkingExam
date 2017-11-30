@@ -238,8 +238,10 @@ public class MatchController : MonoBehaviour {
 	/// Ends a turn by spawning in cardbacks and reset info.
 	/// </summary>
 	private void EndTurn() {
-		SpawnCardBack(_card1);
-		SpawnCardBack(_card2);
+		if(_card1 != null) {
+			SpawnCardBack(_card1);
+			SpawnCardBack(_card2);
+		}
 		ResetCardInfo();
 		_turnedCards = 0;
 	}
