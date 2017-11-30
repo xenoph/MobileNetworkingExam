@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class MatchController : MonoBehaviour {
 	private float countdown = 10f;
 	public string PlayerName;
 	public string OpponentName;
+	private int OppMatches = 0;
+	private int PlayMatches = 0;
 
 	private NetworkController _netController;
 	private InterfaceController _interfaceController;
@@ -66,19 +69,25 @@ public class MatchController : MonoBehaviour {
 	public void SetUpMatch(List<float> cardList, bool starting) {
 		_playerTurn = starting;
 		if(_playerTurn) {
-			WhoTurn.text = PlayerName.ToUpper() + " T U R N";
 			_opponentTurn = false;
 			_canClick = true;
 		} else {
-			WhoTurn.text = OpponentName.ToUpper() + " T U R N";
+			WhoTurn.text = OpponentName.ToUpper() + " TURN";
 			_opponentTurn = true;
 		}
+		Invoke("SetNames", 1f);
 		_interfaceController.GetMatchCanvas();
         IterateCardList(cardList);
 		SpawnCards();
 	}
 
-	
+	private void SetNames() {
+		if(_playerTurn) {
+			WhoTurn.text = PlayerName.ToUpper() + " TURN";
+		} else {
+			WhoTurn.text = OpponentName.ToUpper() + " TURN";
+		}
+	}
 
 	/// <summary>
 	/// Simulate the opponent making a move by changing the card and storing the info
@@ -103,13 +112,12 @@ public class MatchController : MonoBehaviour {
 
 	public void TurnSwitch() {
 		if(_playerTurn == true) {
-			Debug.Log("changes from player turn");
-			WhoTurn.text = OpponentName.ToUpper() + " T U R N";
+			WhoTurn.text = OpponentName.ToUpper() + " TURN";
 			_playerTurn = false;
 			_opponentTurn = true;
 		} else {
-			Debug.Log("Changes to player turn");
-			WhoTurn.text = PlayerName.ToUpper() + " T U R N";
+			
+			WhoTurn.text = PlayerName.ToUpper() + " TURN";
 			_playerTurn = true;
 			_opponentTurn = false;
 			_canClick = true;
@@ -131,7 +139,8 @@ public class MatchController : MonoBehaviour {
 	public void OpponentMatched() {
 		LockCard(_card1);
 		LockCard(_card2);
-		TurnSwitch();
+		if(checkMatchNumber(false)) { EndMatch(); }
+		else { TurnSwitch(); }
 	}
 
 	/// <summary>
@@ -154,6 +163,18 @@ public class MatchController : MonoBehaviour {
 	public void Resign() {
 		_netController.SendResignation();
 		EndMatch();
+	}
+
+	private bool checkMatchNumber(bool player) {
+		if(player) {
+			PlayMatches++;
+		} else {
+			OppMatches++;
+		}
+		if(PlayMatches+OppMatches == 4)
+			return true;
+
+		return false;
 	}
 
 	/// <summary>
@@ -220,10 +241,11 @@ public class MatchController : MonoBehaviour {
 	/// Checks if the two turned cards match by comparing type
 	/// </summary>
 	private void CheckForMatch() {
-		TurnSwitch();
 		if(_card1Type == _card2Type) {
 			MadeMatch();
+			if(checkMatchNumber(true)) { EndMatch(); }
 		} else {
+			TurnSwitch();
 			_netController.SendNoCardMatch();
 			EndTurn();
 		}
@@ -246,6 +268,7 @@ public class MatchController : MonoBehaviour {
 		ResetCardInfo();
 		_netController.SendCardMatch();
 		_turnedCards = 0;
+		
 	}
 
 	/// <summary>
@@ -282,6 +305,13 @@ public class MatchController : MonoBehaviour {
 	/// Ends the match
 	/// </summary>
 	private void EndMatch() {
+		if(OppMatches > PlayMatches)
+			{print("Opponent won");}
+		else if(PlayMatches > OppMatches)
+			{print("You won");}
+		else
+			{print("It's a draw");}
+
 		ResetCardInfo();
 		_cardList.Clear();
 		_interfaceController.CloseMatch();
