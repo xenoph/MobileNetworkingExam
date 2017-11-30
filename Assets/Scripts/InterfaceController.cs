@@ -10,6 +10,8 @@ public class InterfaceController : MonoBehaviour {
 	public GameObject MatchCanvas;
 	public GameObject LoginCanvas;
 	public GameObject MainMenuCanvas;
+	public GameObject WinningCanvas;
+	public GameObject LoadingCanvas;
 
 	public Button FindMatchButton;
 	public Button LoginButton;
@@ -53,7 +55,15 @@ public class InterfaceController : MonoBehaviour {
 	/// <summary>
 	/// Toggles match canvas
 	/// </summary>
+	
 	public void GetMatchCanvas() {
+		ToggleCanvas(LoadingCanvas);
+		Invoke("MatchCanvasReal", 3f);
+		
+	}
+
+	public void MatchCanvasReal()
+	{
 		ToggleCanvas(MatchCanvas);
 	}
 
@@ -108,17 +118,24 @@ public class InterfaceController : MonoBehaviour {
 		FindMatchButton.onClick.AddListener(delegate { act(); });
 	}
 
-	public void MainMenuButton()
+	public void WinningScreen()
+	{
+		ToggleCanvas(WinningCanvas);
+	}
+
+	public void LoadUp()
 	{
 		ToggleCanvas(LoginCanvas);
 	}
+
+	
 	/// <summary>
 	/// Toggles the canvases to the given one by first deactivating all,
 	/// then activating the given one
 	/// </summary>
 	/// <param name="canvas"></param>
 	private void ToggleCanvas(GameObject canvas) {
-		var allCanvas = new GameObject[] { LoginCanvas, LobbyCanvas, MatchCanvas, MainMenuCanvas };
+		var allCanvas = new GameObject[] { LoginCanvas, LobbyCanvas, MatchCanvas, MainMenuCanvas, WinningCanvas, LoadingCanvas };
 		foreach(var can in allCanvas) {
 			can.SetActive(false);
 		}
