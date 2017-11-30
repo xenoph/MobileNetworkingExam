@@ -198,13 +198,12 @@ public class NetworkController : MonoBehaviour {
 			return;
 		}
 
-		SendName();
 		var numList = new List<float>();
-		Debug.Log(obj.data["matchArray"].Count);
+		_opponentSocketID = obj.data["opponentID"].str;
 		for(int i = 0; i < obj.data["matchArray"].Count; i++) {
 			numList.Add(obj.data["matchArray"][i].n);
 		}
-		_opponentSocketID = obj.data["opponentID"].str;
+		SendName();
 		_matchController.SetUpMatch(numList, obj.data["starting"].b);
 	}
 
@@ -266,7 +265,7 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	/// <param name="obj"></param>
 	private void OnGetName(SocketIOEvent obj) {
-		_matchController.OpponentName = obj.data["playerName"];
+		_matchController.OpponentName = obj.data["playerName"].str;
 		_matchController.PlayerName = _playerName;
 	}
 
