@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -2293,7 +2293,6 @@ GameObject:
   - component: {fileID: 930145082}
   - component: {fileID: 930145083}
   - component: {fileID: 930145084}
-  - component: {fileID: 930145085}
   - component: {fileID: 930145086}
   - component: {fileID: 930145087}
   m_Layer: 0
@@ -2345,17 +2344,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Socket: {fileID: 0}
---- !u!114 &930145085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 930145081}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d16ef2a9abd6a742a49c70302ffe018, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &930145086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4854,8 +4842,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1803211182}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 360, y: 740, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 125, y: 222, z: 0}
+  m_LocalScale: {x: 0.3472222, y: 0.3472222, z: 0.3472222}
   m_Children:
   - {fileID: 865308521}
   - {fileID: 1422010467}
