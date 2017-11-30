@@ -9,6 +9,10 @@ public class MatchController : MonoBehaviour {
 
 	public Sprite CardBack;
 	public Sprite[] CardFronts;
+	public Text Timer1;
+	public Text Timer2;
+	public Text WhoTurn;
+	private float countdown = 10f;
 
 	private NetworkController _netController;
 	private InterfaceController _interfaceController;
@@ -25,12 +29,29 @@ public class MatchController : MonoBehaviour {
 	private char _card2Type;
 	private char _card2Placement;
 
+	private bool _opponentTurn;
 	private bool _playerTurn;
 	private int _oppTurn = 0;
 
 	private void Awake() {
 		_netController = GetComponent<NetworkController>();
 		_interfaceController = GetComponent<InterfaceController>();
+	}
+	
+	private void Update()
+	{
+		if(_playerTurn == true || _opponentTurn == true){
+			countdown -= Time.deltaTime;
+			Timer1.text = "" + Mathf.Round(countdown);
+			Timer2.text = "" + Mathf.Round(countdown);
+			if(countdown <= 0){
+				if(_playerTurn){
+					_netController.TimedOut();
+				}
+				EndTurn();
+				TurnSwitch();
+			}
+		}
 	}
 
 	/// <summary>
@@ -45,6 +66,8 @@ public class MatchController : MonoBehaviour {
         IterateCardList(cardList);
 		SpawnCards();
 	}
+
+	
 
 	/// <summary>
 	/// Simulate the opponent making a move by changing the card and storing the info
@@ -67,12 +90,27 @@ public class MatchController : MonoBehaviour {
 		SpawnCardFront(cardType, go);
 	}
 
+	public void TurnSwitch()
+	{
+		if(_playerTurn == true){
+			WhoTurn.text = "T U R N   A R O U N D";
+			_playerTurn = false;
+			_opponentTurn = true;
+		} else {
+			WhoTurn.text = "Y O U R   T U R N";
+			_playerTurn = true;
+			_opponentTurn = false;
+		}
+			countdown = 10f;
+		
+	}
+
 	/// <summary>
 	/// When the opponent did not match their cards
 	/// </summary>
 	public void OpponentDidNotMatch() {
 		EndTurn();
-		_playerTurn = true;
+		TurnSwitch();
 	}
 
 	/// <summary>
@@ -81,7 +119,7 @@ public class MatchController : MonoBehaviour {
 	public void OpponentMatched() {
 		LockCard(_card1);
 		LockCard(_card2);
-		_playerTurn = true;
+		TurnSwitch();
 	}
 
 	/// <summary>

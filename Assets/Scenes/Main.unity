@@ -1247,6 +1247,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: b368ecaeed5c265479c7d7ae991d1387, type: 3}
   - {fileID: 21300000, guid: e73587df9cb95ab44bf55e16cf3ffa9c, type: 3}
   - {fileID: 21300000, guid: 5c989a8f85319aa40abb98f3bba44315, type: 3}
+  Timer1: {fileID: 644408386}
+  Timer2: {fileID: 931770476}
+  WhoTurn: {fileID: 52836228}
 --- !u!1 &931770474
 GameObject:
   m_ObjectHideFlags: 0
@@ -1735,7 +1738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1161756764
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2294,7 +2297,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1422010467
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2751,7 +2754,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1014228016971116, guid: ae812b15411baa44aacd3fba53d9ca26, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224318655290541670, guid: ae812b15411baa44aacd3fba53d9ca26,
         type: 2}
