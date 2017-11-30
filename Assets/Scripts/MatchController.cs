@@ -46,6 +46,7 @@ public class MatchController : MonoBehaviour {
 			Timer2.text = "" + Mathf.Round(countdown);
 			if(countdown <= 0){
 				if(_playerTurn){
+					Debug.Log("timed out");
 					_netController.TimedOut();
 				}
 				EndTurn();
@@ -120,6 +121,13 @@ public class MatchController : MonoBehaviour {
 		LockCard(_card1);
 		LockCard(_card2);
 		TurnSwitch();
+	}
+
+	/// <summary>
+	/// When the opponent timed out
+	/// </summary>
+	public void OpponentTimedOut() {
+		EndTurn();
 	}
 
 	/// <summary>

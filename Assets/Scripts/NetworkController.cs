@@ -247,7 +247,7 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	/// <param name="obj"></param>
 	private void OnTimedOut(SocketIOEvent obj) {
-		_matchController.OpponentResigned();
+		_matchController.OpponentTimedOut();
 	}
 
 	/// <summary>
