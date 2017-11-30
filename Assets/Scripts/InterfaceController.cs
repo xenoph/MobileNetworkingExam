@@ -9,6 +9,7 @@ public class InterfaceController : MonoBehaviour {
 	public GameObject LobbyCanvas;
 	public GameObject MatchCanvas;
 	public GameObject LoginCanvas;
+	public GameObject MainMenuCanvas;
 
 	public Button FindMatchButton;
 	public Button LoginButton;
@@ -29,7 +30,7 @@ public class InterfaceController : MonoBehaviour {
 	private void Start () {
 		SetErrorText();
 		SetLobbyHeadlineText();
-		ToggleCanvas(LoginCanvas);
+		ToggleCanvas(MainMenuCanvas);
 	}
 
 	/// <summary>
@@ -107,13 +108,17 @@ public class InterfaceController : MonoBehaviour {
 		FindMatchButton.onClick.AddListener(delegate { act(); });
 	}
 
+	public void MainMenuButton()
+	{
+		ToggleCanvas(LoginCanvas);
+	}
 	/// <summary>
 	/// Toggles the canvases to the given one by first deactivating all,
 	/// then activating the given one
 	/// </summary>
 	/// <param name="canvas"></param>
 	private void ToggleCanvas(GameObject canvas) {
-		var allCanvas = new GameObject[] { LoginCanvas, LobbyCanvas, MatchCanvas };
+		var allCanvas = new GameObject[] { LoginCanvas, LobbyCanvas, MatchCanvas, MainMenuCanvas };
 		foreach(var can in allCanvas) {
 			can.SetActive(false);
 		}
