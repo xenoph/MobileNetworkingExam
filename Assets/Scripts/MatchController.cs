@@ -29,6 +29,7 @@ public class MatchController : MonoBehaviour {
 	private char _card2Type;
 	private char _card2Placement;
 
+	private bool _canClick;
 	private bool _opponentTurn;
 	private bool _playerTurn;
 	private int _oppTurn = 0;
@@ -64,6 +65,7 @@ public class MatchController : MonoBehaviour {
 		_playerTurn = starting;
 		if(_playerTurn) {
 			_opponentTurn = false;
+			_canClick = true;
 		} else {
 			_opponentTurn = true;
 		}
@@ -106,6 +108,7 @@ public class MatchController : MonoBehaviour {
 			WhoTurn.text = "Y O U R   T U R N";
 			_playerTurn = true;
 			_opponentTurn = false;
+			_canClick = true;
 		}
 			countdown = 10f;
 	}
@@ -154,7 +157,7 @@ public class MatchController : MonoBehaviour {
 	/// If it's turn 2, check for a match and end round
 	/// </summary>
 	public void TurnCard() {
-		if(!_playerTurn) { return; }
+		if(!_canClick) { return; }
 		var go = EventSystem.current.currentSelectedGameObject;
 		var cardType = go.name[0];
 		var cardPlacement = go.name[1];
@@ -165,10 +168,12 @@ public class MatchController : MonoBehaviour {
 			_turnedCards++;
 		} else {
 			//_playerTurn = false;
+			_canClick = false;
 			_card2Type = cardType;
 			_card2Placement = cardPlacement;
 			_card2 = go;
 			Invoke("CheckForMatch", 1f);
+			
 		}
 
 		SpawnCardFront(cardType, go);
