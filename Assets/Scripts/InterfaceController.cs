@@ -24,9 +24,12 @@ public class InterfaceController : MonoBehaviour {
 	public Image[] CardSpawnLocations;
 
 	private NetworkController _netController;
+	private MatchController _matchController;
+
 
 	private void Awake() {
 		_netController = GetComponent<NetworkController>();
+		_matchController = GetComponent<MatchController>();
 	}
 
 	private void Start () {
@@ -54,16 +57,13 @@ public class InterfaceController : MonoBehaviour {
 
 	/// <summary>
 	/// Toggles match canvas
-	/// </summary>
-	
 	public void GetMatchCanvas() {
 		ToggleCanvas(LoadingCanvas);
 		Invoke("MatchCanvasReal", 3f);
-		
 	}
 
-	public void MatchCanvasReal()
-	{
+	public void MatchCanvasReal() {
+		_matchController.StartCountdown();
 		ToggleCanvas(MatchCanvas);
 	}
 
@@ -101,13 +101,6 @@ public class InterfaceController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Closes down the match after it has ended
-	/// </summary>
-	public void CloseMatch() {
-
-	}
-
-	/// <summary>
 	/// Sets the lobby button text and changes listener to the given Action
 	/// </summary>
 	/// <param name="txt"></param>
@@ -118,18 +111,15 @@ public class InterfaceController : MonoBehaviour {
 		FindMatchButton.onClick.AddListener(delegate { act(); });
 	}
 
-	public void WinningScreen()
-	{
+	public void WinningScreen() {
 		ToggleCanvas(WinningCanvas);
 	}
 
-	public void LoadUp()
-	{
+	public void LoadUp() {
 		ToggleCanvas(LoginCanvas);
 	}
 
-	public void MainMenu()
-	{
+	public void MainMenu() {
 		ToggleCanvas(MainMenuCanvas);
 	}
 

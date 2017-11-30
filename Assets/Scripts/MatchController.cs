@@ -30,11 +30,9 @@ public class MatchController : MonoBehaviour {
 
 	private GameObject _card1;
 	private char _card1Type;
-	private char _card1Placement;
 
 	private GameObject _card2;
 	private char _card2Type;
-	private char _card2Placement;
 
 	private bool _canClick;
 	private bool _opponentTurn;
@@ -46,16 +44,12 @@ public class MatchController : MonoBehaviour {
 		_interfaceController = GetComponent<InterfaceController>();
 	}
 	
-	private void Update()
-	{
+	private void Update() {
 		if(_playerTurn == true || _opponentTurn == true){
 			countdown -= Time.deltaTime;
 			Timer1.text = "" + Mathf.Round(countdown);
 			Timer2.text = "" + Mathf.Round(countdown);
 			if(countdown <= 0){
-				if(_playerTurn){
-					_netController.TimedOut();
-				}
 				EndTurn();
 				TurnSwitch();
 			}
@@ -70,6 +64,16 @@ public class MatchController : MonoBehaviour {
 	/// <param name="starting"></param>
 	public void SetUpMatch(List<float> cardList, bool starting) {
 		_playerTurn = starting;
+		Invoke("SetNames", 1f);
+		_interfaceController.GetMatchCanvas();
+        IterateCardList(cardList);
+		SpawnCards();
+	}
+
+	/// <summary>
+	/// Starts the timer. Needs to be called from the interface controller when it unloads the loading screen
+	/// </summary>
+	public void StartCountdown() {
 		if(_playerTurn) {
 			_opponentTurn = false;
 			_canClick = true;
@@ -77,12 +81,11 @@ public class MatchController : MonoBehaviour {
 			WhoTurn.text = OpponentName.ToUpper() + " TURN";
 			_opponentTurn = true;
 		}
-		Invoke("SetNames", 1f);
-		_interfaceController.GetMatchCanvas();
-        IterateCardList(cardList);
-		SpawnCards();
 	}
 
+	/// <summary>
+	/// Sets the player names in the headline
+	/// </summary>	
 	private void SetNames() {
 		if(_playerTurn) {
 			WhoTurn.text = PlayerName.ToUpper() + " TURN";
@@ -102,29 +105,29 @@ public class MatchController : MonoBehaviour {
 		if(_oppTurn == 1) {
 			_card1 = go;
 			_card1Type = cardType;
-			_card1Placement = placement.ToString()[0];
 		} else {
 			_card2 = go;
 			_card2Type = cardType;
-			_card2Placement = placement.ToString()[0];
 			_oppTurn = 0;
 		}
 		SpawnCardFront(cardType, go);
 	}
 
+	/// <summary>
+	/// Switches the turn locally.
+	/// </summary>
 	public void TurnSwitch() {
 		if(_playerTurn == true) {
 			WhoTurn.text = OpponentName.ToUpper() + " TURN";
 			_playerTurn = false;
 			_opponentTurn = true;
 		} else {
-			
 			WhoTurn.text = PlayerName.ToUpper() + " TURN";
 			_playerTurn = true;
 			_opponentTurn = false;
 			_canClick = true;
 		}
-			countdown = 10f;
+		countdown = 10f;
 	}
 
 	/// <summary>
@@ -146,13 +149,6 @@ public class MatchController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// When the opponent timed out
-	/// </summary>
-	public void OpponentTimedOut() {
-		//EndTurn();
-	}
-
-	/// <summary>
 	/// When the opponent resign - right now, just end match!
 	/// </summary>
 	public void OpponentResigned() {
@@ -167,13 +163,18 @@ public class MatchController : MonoBehaviour {
 		EndMatch();
 	}
 
+	/// <summary>
+	/// Checks the amount of matches made. Should give true if it has hit four, which is the max
+	/// </summary>
+	/// <param name="player"></param>
+	/// <returns></returns>
 	private bool checkMatchNumber(bool player) {
 		if(player) {
 			PlayMatches++;
-		} else {
-			OppMatches++;
+		} else { 
+			OppMatches++; 
 		}
-		if(PlayMatches+OppMatches == 4)
+		if(PlayMatches + OppMatches == 4)
 			return true;
 
 		return false;
@@ -190,14 +191,11 @@ public class MatchController : MonoBehaviour {
 		var cardPlacement = go.name[1];
 		if(_turnedCards == 0) {
 			_card1Type = cardType;
-			_card1Placement = cardPlacement;
 			_card1 = go;
 			_turnedCards++;
 		} else {
-			//_playerTurn = false;
 			_canClick = false;
 			_card2Type = cardType;
-			_card2Placement = cardPlacement;
 			_card2 = go;
 			Invoke("CheckForMatch", 1f);
 			
@@ -246,6 +244,7 @@ public class MatchController : MonoBehaviour {
 		if(_card1Type == _card2Type) {
 			MadeMatch();
 			if(checkMatchNumber(true)) { EndMatch(); }
+			else { TurnSwitch(); }
 		} else {
 			TurnSwitch();
 			_netController.SendNoCardMatch();
@@ -265,12 +264,11 @@ public class MatchController : MonoBehaviour {
 	/// When a match was made. Should lock cards, reset info and notify server
 	/// </summary>
 	private void MadeMatch() {
+		_turnedCards = 0;
 		LockCard(_card1);
 		LockCard(_card2);
 		ResetCardInfo();
 		_netController.SendCardMatch();
-		_turnedCards = 0;
-		
 	}
 
 	/// <summary>
@@ -285,10 +283,8 @@ public class MatchController : MonoBehaviour {
 	/// Ends a turn by spawning in cardbacks and reset info.
 	/// </summary>
 	private void EndTurn() {
-		if(_card1 != null) {
-			SpawnCardBack(_card1);
-			SpawnCardBack(_card2);
-		}
+		if(_card1 != null) { SpawnCardBack(_card1); }
+		if(_card2 != null) { SpawnCardBack(_card2); }
 		ResetCardInfo();
 		_turnedCards = 0;
 	}
@@ -326,7 +322,6 @@ public class MatchController : MonoBehaviour {
 
 		ResetCardInfo();
 		_cardList.Clear();
-		_interfaceController.CloseMatch();
 	}
 
 	/// <summary>
