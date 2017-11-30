@@ -98,11 +98,22 @@ public class NetworkController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// Send the playername to the server
+	/// </summary>	
+	public void SendName() {
+		var json = CreateJSON();
+		json.AddField("oppSocket", _opponentSocketID);
+		json.AddField("playerName", _playerName);
+		Socket.Emit("SendName", json);
+	}
+
+	/// <summary>
 	/// Sets all the incoming connections from the server
 	/// </summary>
 	private void SetSocketConnections() {
 		Socket.On("init", OnInit);
 		Socket.On("registered", OnRegister);
+		Socket.On("getName", OnGetName);
 
 		Socket.On("noUsers", OnNoUsersOnline);
 		Socket.On("onlineUsers", OnUsersOnline);
@@ -187,12 +198,12 @@ public class NetworkController : MonoBehaviour {
 			return;
 		}
 
+		SendName();
 		var numList = new List<float>();
 		Debug.Log(obj.data["matchArray"].Count);
 		for(int i = 0; i < obj.data["matchArray"].Count; i++) {
 			numList.Add(obj.data["matchArray"][i].n);
 		}
-		Debug.Log("iterated numbers");
 		_opponentSocketID = obj.data["opponentID"].str;
 		_matchController.SetUpMatch(numList, obj.data["starting"].b);
 	}
@@ -248,6 +259,15 @@ public class NetworkController : MonoBehaviour {
 	/// <param name="obj"></param>
 	private void OnTimedOut(SocketIOEvent obj) {
 		_matchController.OpponentTimedOut();
+	}
+
+	/// <summary>
+	/// When receiving the name of the opposing player
+	/// </summary>
+	/// <param name="obj"></param>
+	private void OnGetName(SocketIOEvent obj) {
+		_matchController.OpponentName = obj.data["playerName"];
+		_matchController.PlayerName = _playerName;
 	}
 
 	/// <summary>
