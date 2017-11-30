@@ -127,6 +127,7 @@ public class NetworkController : MonoBehaviour {
 		Socket.On("cardMatch", OnCardMatch);
 
 		Socket.On("timedOut", OnTimedOut);
+		Socket.On("playerNotFound", OnPlayerDisconnected);
 	}
 
 	/// <summary>
@@ -135,6 +136,14 @@ public class NetworkController : MonoBehaviour {
 	/// <param name="obj"></param>
 	private void OnInit(SocketIOEvent obj) {
 		Debug.Log("init");
+	}
+
+	/// <summary>
+	/// If the opposing player for some reason leaves outside of a button.
+	/// </summary>
+	/// <param name="obj"></param>
+	private void OnPlayerDisconnected(SocketIOEvent obj) {
+
 	}
 
 	/// <summary>
