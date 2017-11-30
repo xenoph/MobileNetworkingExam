@@ -164,7 +164,7 @@ public class MatchController : MonoBehaviour {
 			_card1 = go;
 			_turnedCards++;
 		} else {
-			_playerTurn = false;
+			//_playerTurn = false;
 			_card2Type = cardType;
 			_card2Placement = cardPlacement;
 			_card2 = go;
