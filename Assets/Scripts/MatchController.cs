@@ -63,6 +63,11 @@ public class MatchController : MonoBehaviour {
 	/// <param name="starting"></param>
 	public void SetUpMatch(List<float> cardList, bool starting) {
 		_playerTurn = starting;
+		if(_playerTurn) {
+			_opponentTurn = false;
+		} else {
+			_opponentTurn = true;
+		}
 		_interfaceController.GetMatchCanvas();
         IterateCardList(cardList);
 		SpawnCards();
@@ -127,7 +132,7 @@ public class MatchController : MonoBehaviour {
 	/// When the opponent timed out
 	/// </summary>
 	public void OpponentTimedOut() {
-		EndTurn();
+		//EndTurn();
 	}
 
 	/// <summary>
