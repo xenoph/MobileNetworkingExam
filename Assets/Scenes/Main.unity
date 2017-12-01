@@ -3104,8 +3104,9 @@ GameObject:
   - component: {fileID: 1042751685}
   - component: {fileID: 1042751687}
   - component: {fileID: 1042751686}
+  - component: {fileID: 1042751688}
   m_Layer: 5
-  m_Name: I WANT THIS TO BLINK GUYS
+  m_Name: BlinkingText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3168,6 +3169,23 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1042751684}
+--- !u!95 &1042751688
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1042751684}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6aba096518e326743b81dee051593eff, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1 &1049236408
 GameObject:
   m_ObjectHideFlags: 0
@@ -5299,7 +5317,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1014228016971116, guid: ae812b15411baa44aacd3fba53d9ca26, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224318655290541670, guid: ae812b15411baa44aacd3fba53d9ca26,
         type: 2}
@@ -6356,6 +6374,10 @@ Prefab:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1674769496650764, guid: fab1349e8a24849499bfa7cf9c329465, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1518210152273918, guid: fab1349e8a24849499bfa7cf9c329465, type: 2}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
