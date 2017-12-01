@@ -13,6 +13,7 @@ public class InterfaceController : MonoBehaviour {
 	public GameObject MainMenuCanvas;
 	public GameObject WinningCanvas;
 	public GameObject LoadingCanvas;
+	public GameObject DiscCanvas;
 
 	public Button FindMatchButton;
 	public Button LoginButton;
@@ -123,6 +124,10 @@ public class InterfaceController : MonoBehaviour {
 	public void MainMenu() {
 		ToggleCanvas(MainMenuCanvas);
 	}
+	
+	public void DiscScreen() {
+		ToggleCanvas(DiscCanvas);
+	}
 
 	public void SceneReset(){
 		Scene loadedLevel = SceneManager.GetActiveScene ();
@@ -136,7 +141,7 @@ public class InterfaceController : MonoBehaviour {
 	/// </summary>
 	/// <param name="canvas"></param>
 	private void ToggleCanvas(GameObject canvas) {
-		var allCanvas = new GameObject[] { LoginCanvas, LobbyCanvas, MatchCanvas, MainMenuCanvas, WinningCanvas, LoadingCanvas };
+		var allCanvas = new GameObject[] { LoginCanvas, LobbyCanvas, MatchCanvas, MainMenuCanvas, WinningCanvas, LoadingCanvas, DiscCanvas };
 		foreach(var can in allCanvas) {
 			can.SetActive(false);
 		}
