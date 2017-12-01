@@ -58,15 +58,11 @@ public class InterfaceController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Toggles match canvas
+	/// Toggles loading canvas before starting the actual match
+	/// <summary>
 	public void GetMatchCanvas() {
 		ToggleCanvas(LoadingCanvas);
-		Invoke("MatchCanvasReal", 3f);
-	}
-
-	public void MatchCanvasReal() {
-		_matchController.StartCountdown();
-		ToggleCanvas(MatchCanvas);
+		StartCoroutine(DelayToggleScreen(3, MatchCanvas, _matchController.StartCountdown));
 	}
 
 	/// <summary>
@@ -125,10 +121,17 @@ public class InterfaceController : MonoBehaviour {
 		ToggleCanvas(MainMenuCanvas);
 	}
 	
-	public void DiscScreen() {
+	/// <summary>
+	/// When the opponent has disconnected.
+	/// </summary>
+	public void PlayerDisconnected() {
 		ToggleCanvas(DiscCanvas);
+		StartCoroutine(DelayToggleScreen(3, LobbyCanvas));
 	}
 
+	/// <summary>
+	/// Resets the scene by reloading it.
+	/// </summary>	
 	public void SceneReset(){
 		Scene loadedLevel = SceneManager.GetActiveScene ();
     	SceneManager.LoadScene (loadedLevel.buildIndex);
@@ -146,6 +149,14 @@ public class InterfaceController : MonoBehaviour {
 			can.SetActive(false);
 		}
 		canvas.SetActive(true);
+	}
+
+	private IEnumerator DelayToggleScreen(int delay, GameObject screen, Action act = null) {
+		yield return new WaitForSeconds(delay);
+		ToggleCanvas(screen);
+		if(act != null) {
+			act();
+		}
 	}
 
 	/// <summary>

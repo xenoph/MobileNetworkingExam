@@ -15,11 +15,9 @@ public class MatchController : MonoBehaviour {
 	public Text WhoTurn;
 	public Text WinText1;
 	public Text WinText2;
-	private float countdown = 10f;
+
 	public string PlayerName;
 	public string OpponentName;
-	private int OppMatches = 0;
-	private int PlayMatches = 0;
 
 	private NetworkController _netController;
 	private InterfaceController _interfaceController;
@@ -38,6 +36,10 @@ public class MatchController : MonoBehaviour {
 	private bool _opponentTurn;
 	private bool _playerTurn;
 	private int _oppTurn = 0;
+
+	private float countdown = 10f;
+	private int OppMatches = 0;
+	private int PlayMatches = 0;
 
 	private void Awake() {
 		_netController = GetComponent<NetworkController>();
@@ -80,17 +82,6 @@ public class MatchController : MonoBehaviour {
 		} else {
 			WhoTurn.text = OpponentName.ToUpper() + " TURN";
 			_opponentTurn = true;
-		}
-	}
-
-	/// <summary>
-	/// Sets the player names in the headline
-	/// </summary>	
-	private void SetNames() {
-		if(_playerTurn) {
-			WhoTurn.text = PlayerName.ToUpper() + " TURN";
-		} else {
-			WhoTurn.text = OpponentName.ToUpper() + " TURN";
 		}
 	}
 
@@ -139,6 +130,14 @@ public class MatchController : MonoBehaviour {
 	}
 
 	/// <summary>
+	/// If the opponent player disconnects, reset the cards and notify the player
+	/// </summary>	
+	public void OpponentDisconnected() {
+		ResetCardInfo();
+		_interfaceController.PlayerDisconnected();
+	}
+
+	/// <summary>
 	/// When the opponent matched their cards
 	/// </summary>
 	public void OpponentMatched() {
@@ -164,23 +163,6 @@ public class MatchController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Checks the amount of matches made. Should give true if it has hit four, which is the max
-	/// </summary>
-	/// <param name="player"></param>
-	/// <returns></returns>
-	private bool checkMatchNumber(bool player) {
-		if(player) {
-			PlayMatches++;
-		} else { 
-			OppMatches++; 
-		}
-		if(PlayMatches + OppMatches == 4)
-			return true;
-
-		return false;
-	}
-
-	/// <summary>
 	/// Turn the card over and save the details of what it is - which is gotten from the name
 	/// If it's turn 2, check for a match and end round
 	/// </summary>
@@ -203,6 +185,34 @@ public class MatchController : MonoBehaviour {
 
 		SpawnCardFront(cardType, go);
 		SendMove(cardPlacement.ToString());
+	}
+
+	/// <summary>
+	/// Checks the amount of matches made. Should give true if it has hit four, which is the max
+	/// </summary>
+	/// <param name="player"></param>
+	/// <returns></returns>
+	private bool checkMatchNumber(bool player) {
+		if(player) {
+			PlayMatches++;
+		} else { 
+			OppMatches++; 
+		}
+		if(PlayMatches + OppMatches == 4)
+			return true;
+
+		return false;
+	}
+
+	/// <summary>
+	/// Sets the player names in the headline
+	/// </summary>	
+	private void SetNames() {
+		if(_playerTurn) {
+			WhoTurn.text = PlayerName.ToUpper() + " TURN";
+		} else {
+			WhoTurn.text = OpponentName.ToUpper() + " TURN";
+		}
 	}
 
 	/// <summary>
@@ -304,18 +314,13 @@ public class MatchController : MonoBehaviour {
 	/// </summary>
 	private void EndMatch() {
 		_interfaceController.WinningScreen();
-		if(OppMatches > PlayMatches)
-			{
+		if(OppMatches > PlayMatches) {
 				WinText1.text = ("Loser");
 				WinText2.text = ("Loser");
-			}
-		else if(PlayMatches > OppMatches)
-			{
+			} else if(PlayMatches > OppMatches) {
 				WinText1.text = ("Winner");
 				WinText2.text = ("Winner");
-			}
-		else
-			{
+			} else {
 				WinText1.text = ("Tie");
 				WinText2.text = ("Tie");
 			}

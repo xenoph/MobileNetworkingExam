@@ -17,6 +17,9 @@ public class NetworkController : MonoBehaviour {
 	private string _opponentSocketID;
 	private string _opponentPlayerName;
 
+	private string _matchingSocket;
+	private bool _matchRequester;
+
 	private void Awake() {
 		_interfaceController = GetComponent<InterfaceController>();
 		_matchController = GetComponent<MatchController>();
@@ -45,6 +48,8 @@ public class NetworkController : MonoBehaviour {
 	/// Sends request to match with another online player
 	/// </summary>
 	public void MatchWithOtherPlayer() {
+		Debug.Log("Sending match request");
+		_matchRequester = true;
 		var json = CreateJSON();
 		json.AddField("playerName", _playerName);
 		Socket.Emit("MatchPlayers", json);
@@ -118,6 +123,8 @@ public class NetworkController : MonoBehaviour {
 		Socket.On("noUsers", OnNoUsersOnline);
 		Socket.On("onlineUsers", OnUsersOnline);
 		Socket.On("noMatch", OnNoMatch);
+		Socket.On("matchFailed", OnMatchFailed);
+		Socket.On("matchSucceeded", OnMatchSucceeded);
 		Socket.On("matchedPlayer", OnMatchedPlayer);
 
 		Socket.On("playerResigned", OnResign);
@@ -126,6 +133,49 @@ public class NetworkController : MonoBehaviour {
 		Socket.On("cardMatch", OnCardMatch);
 
 		Socket.On("playerNotFound", OnPlayerDisconnected);
+	}
+
+	/// <summary>
+	/// If the match failed (if the player is not in the lobby)
+	/// </summary>
+	private void SendMatchingFailed() {
+		var json = CreateJSON();
+		json.AddField("oppSocket", _matchingSocket);
+		Socket.Emit("MatchFailed", json);
+		_matchingSocket = null;
+	}
+
+	/// <summary>
+	/// Send a notification that the player is able to match
+	/// </summary>
+	private void SendMatchingSucceeded() {
+		Debug.Log("sending match succeded");
+		var json = CreateJSON();
+		json.AddField("oppSocket", _matchingSocket);
+		Socket.Emit("MatchSucceeded", json);
+		_matchingSocket = null;
+	}
+
+	/// <summary>
+	/// Notify the player that the matching failed
+	/// </summary>
+	/// <param name="obj"></param>
+	private void OnMatchFailed(SocketIOEvent obj) {
+		_interfaceController.MatchingFailed();
+	}
+
+	/// <summary>
+	/// Matching succeeded, so the match should start setting up
+	/// </summary>
+	/// <param name="obj"></param>
+	private void OnMatchSucceeded(SocketIOEvent obj) {
+		var numList = new List<float>();
+		_opponentSocketID = obj.data["opponentID"].str;
+		for(int i = 0; i < obj.data["matchArray"].Count; i++) {
+			numList.Add(obj.data["matchArray"][i].n);
+		}
+		SendName();
+		_matchController.SetUpMatch(numList, obj.data["starting"].b);
 	}
 
 	/// <summary>
@@ -141,7 +191,7 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	/// <param name="obj"></param>
 	private void OnPlayerDisconnected(SocketIOEvent obj) {
-		_matchController.OpponentResigned();
+		_matchController.OpponentDisconnected();
 	}
 
 	/// <summary>
@@ -200,18 +250,12 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	/// <param name="obj"></param>
 	private void OnMatchedPlayer(SocketIOEvent obj) {
+		_matchingSocket = obj.data["oppSocket"].str;
 		if(!_interfaceController.LobbyCanvas.activeSelf) {
-			_interfaceController.MatchingFailed();
+			SendMatchingFailed();
 			return;
 		}
-
-		var numList = new List<float>();
-		_opponentSocketID = obj.data["opponentID"].str;
-		for(int i = 0; i < obj.data["matchArray"].Count; i++) {
-			numList.Add(obj.data["matchArray"][i].n);
-		}
-		SendName();
-		_matchController.SetUpMatch(numList, obj.data["starting"].b);
+		SendMatchingSucceeded();
 	}
 
 	/// <summary>
