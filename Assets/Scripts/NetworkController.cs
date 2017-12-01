@@ -18,6 +18,7 @@ public class NetworkController : MonoBehaviour {
 	private string _opponentPlayerName;
 
 	private string _matchingSocket;
+	private bool _matchRequester;
 
 	private void Awake() {
 		_interfaceController = GetComponent<InterfaceController>();
@@ -47,6 +48,8 @@ public class NetworkController : MonoBehaviour {
 	/// Sends request to match with another online player
 	/// </summary>
 	public void MatchWithOtherPlayer() {
+		Debug.Log("Sending match request");
+		_matchRequester = true;
 		var json = CreateJSON();
 		json.AddField("playerName", _playerName);
 		Socket.Emit("MatchPlayers", json);
@@ -137,19 +140,34 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	private void SendMatchingFailed() {
 		var json = CreateJSON();
+		json.AddField("oppSocket", _matchingSocket);
 		Socket.Emit("MatchFailed", json);
+		_matchingSocket = null;
 	}
 
+	/// <summary>
+	/// Send a notification that the player is able to match
+	/// </summary>
 	private void SendMatchingSucceeded() {
+		Debug.Log("sending match succeded");
 		var json = CreateJSON();
 		json.AddField("oppSocket", _matchingSocket);
 		Socket.Emit("MatchSucceeded", json);
+		_matchingSocket = null;
 	}
 
+	/// <summary>
+	/// Notify the player that the matching failed
+	/// </summary>
+	/// <param name="obj"></param>
 	private void OnMatchFailed(SocketIOEvent obj) {
 		_interfaceController.MatchingFailed();
 	}
 
+	/// <summary>
+	/// Matching succeeded, so the match should start setting up
+	/// </summary>
+	/// <param name="obj"></param>
 	private void OnMatchSucceeded(SocketIOEvent obj) {
 		var numList = new List<float>();
 		_opponentSocketID = obj.data["opponentID"].str;
@@ -232,13 +250,12 @@ public class NetworkController : MonoBehaviour {
 	/// </summary>
 	/// <param name="obj"></param>
 	private void OnMatchedPlayer(SocketIOEvent obj) {
+		_matchingSocket = obj.data["oppSocket"].str;
 		if(!_interfaceController.LobbyCanvas.activeSelf) {
 			SendMatchingFailed();
 			return;
 		}
-		_matchingSocket = obj.data["oppSocket"].str;
 		SendMatchingSucceeded();
-
 	}
 
 	/// <summary>
