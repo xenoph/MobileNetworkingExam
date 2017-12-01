@@ -149,7 +149,6 @@ public class NetworkController : MonoBehaviour {
 	/// Send a notification that the player is able to match
 	/// </summary>
 	private void SendMatchingSucceeded() {
-		Debug.Log("sending match succeded");
 		var json = CreateJSON();
 		json.AddField("oppSocket", _matchingSocket);
 		Socket.Emit("MatchSucceeded", json);
