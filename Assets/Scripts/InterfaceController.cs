@@ -133,8 +133,9 @@ public class InterfaceController : MonoBehaviour {
 	/// Resets the scene by reloading it.
 	/// </summary>	
 	public void SceneReset(){
-		Scene loadedLevel = SceneManager.GetActiveScene ();
-    	SceneManager.LoadScene (loadedLevel.buildIndex);
+		ToggleCanvas(LobbyCanvas);
+		//Scene loadedLevel = SceneManager.GetActiveScene ();
+    	//SceneManager.LoadScene (loadedLevel.buildIndex);
 	}
 
 	

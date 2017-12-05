@@ -37,9 +37,9 @@ public class MatchController : MonoBehaviour {
 	private bool _playerTurn;
 	private int _oppTurn = 0;
 
-	private float countdown = 10f;
-	private int OppMatches = 0;
-	private int PlayMatches = 0;
+	private float _countdown = 10f;
+	private int _oppMatches = 0;
+	private int _playMatches = 0;
 
 	private void Awake() {
 		_netController = GetComponent<NetworkController>();
@@ -48,10 +48,10 @@ public class MatchController : MonoBehaviour {
 	
 	private void Update() {
 		if(_playerTurn == true || _opponentTurn == true){
-			countdown -= Time.deltaTime;
-			Timer1.text = "" + Mathf.Round(countdown);
-			Timer2.text = "" + Mathf.Round(countdown);
-			if(countdown <= 0){
+			_countdown -= Time.deltaTime;
+			Timer1.text = "" + Mathf.Round(_countdown);
+			Timer2.text = "" + Mathf.Round(_countdown);
+			if(_countdown <= 0){
 				EndTurn();
 				TurnSwitch();
 			}
@@ -118,7 +118,7 @@ public class MatchController : MonoBehaviour {
 			_opponentTurn = false;
 			_canClick = true;
 		}
-		countdown = 10f;
+		_countdown = 10f;
 	}
 
 	/// <summary>
@@ -194,11 +194,11 @@ public class MatchController : MonoBehaviour {
 	/// <returns></returns>
 	private bool checkMatchNumber(bool player) {
 		if(player) {
-			PlayMatches++;
+			_playMatches++;
 		} else { 
-			OppMatches++; 
+			_oppMatches++; 
 		}
-		if(PlayMatches + OppMatches == 4)
+		if(_playMatches + _oppMatches == 4)
 			return true;
 
 		return false;
@@ -314,16 +314,20 @@ public class MatchController : MonoBehaviour {
 	/// </summary>
 	private void EndMatch() {
 		_interfaceController.WinningScreen();
-		if(OppMatches > PlayMatches) {
-				WinText1.text = ("Loser");
-				WinText2.text = ("Loser");
-			} else if(PlayMatches > OppMatches) {
-				WinText1.text = ("Winner");
-				WinText2.text = ("Winner");
-			} else {
-				WinText1.text = ("Tie");
-				WinText2.text = ("Tie");
-			}
+		if(_oppMatches > _playMatches) {
+			WinText1.text = ("Loser");
+			WinText2.text = ("Loser");
+		} else if(_playMatches > _oppMatches) {
+			WinText1.text = ("Winner");
+			WinText2.text = ("Winner");
+		} else {
+			WinText1.text = ("Tie");
+			WinText2.text = ("Tie");
+		}
+
+		_oppMatches = 0;
+		_playMatches = 0;
+		_countdown = 10f;
 
 		ResetCardInfo();
 		_cardList.Clear();
