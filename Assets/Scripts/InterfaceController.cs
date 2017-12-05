@@ -134,8 +134,6 @@ public class InterfaceController : MonoBehaviour {
 	/// </summary>	
 	public void SceneReset(){
 		ToggleCanvas(LobbyCanvas);
-		//Scene loadedLevel = SceneManager.GetActiveScene ();
-    	//SceneManager.LoadScene (loadedLevel.buildIndex);
 	}
 
 	
